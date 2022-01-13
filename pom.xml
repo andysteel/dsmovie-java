@@ -53,6 +53,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>dsmovie</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
