@@ -1,7 +1,8 @@
-FROM openjdk:17
+FROM maven:3.8.6-eclipse-temurin-17-alpine
 WORKDIR /app
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
 && mkdir -p /logs
 EXPOSE 8182
-COPY target/dsmovie.jar dsmovie.jar
-ENTRYPOINT ["java","-jar","dsmovie.jar"]
+COPY . .
+RUN mvn clean install -DskipTests
+ENTRYPOINT ["java","-jar","target/dsmovie.jar"]
