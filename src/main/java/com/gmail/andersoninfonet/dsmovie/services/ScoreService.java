@@ -1,5 +1,8 @@
 package com.gmail.andersoninfonet.dsmovie.services;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.gmail.andersoninfonet.dsmovie.dto.MovieDTO;
 import com.gmail.andersoninfonet.dsmovie.dto.ScoreDTO;
 import com.gmail.andersoninfonet.dsmovie.entities.Score;
@@ -8,8 +11,7 @@ import com.gmail.andersoninfonet.dsmovie.repositories.MovieRepository;
 import com.gmail.andersoninfonet.dsmovie.repositories.ScoreRepository;
 import com.gmail.andersoninfonet.dsmovie.repositories.UserRepository;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 
 @Service
 public class ScoreService {
@@ -26,6 +28,7 @@ public class ScoreService {
     }
 
     @Transactional
+    @RateLimiter(name = "movie-rate-limiter")
     public MovieDTO saveScore(ScoreDTO scoreDTO) {
 
         Runnable updateScoreForNewUser = () -> {
@@ -41,6 +44,7 @@ public class ScoreService {
         return new MovieDTO(this.movieRepository.getById(scoreDTO.movieId()));
     }
 
+    @RateLimiter(name = "movie-rate-limiter")
     private void updateScore(ScoreDTO scoreDTO, User userSaved) {
         this.movieRepository.findById(scoreDTO.movieId())
         .ifPresent(movie -> {
